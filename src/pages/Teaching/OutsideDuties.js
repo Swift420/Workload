@@ -1,22 +1,28 @@
 import React, { useState } from "react";
-import { User } from '../../UserData'
+import { User, Users } from '../../UserData'
 import { Grid, TextField, Button, Card, CardContent, Typography, ListItem } from "@material-ui/core"
 import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom"
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import Stack from '@mui/material/Stack';
+import {useSelector} from "react-redux"
 
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
 function OutsideDuties() {
+   const user1 = useSelector((state) => state.user.value)
 
+    const [open, setOpen] = React.useState(false);
 
-     const columns: GridColDef[] = [
+//      const columns: GridColDef[] = [
  
-  { field: 'Task', headerName: 'Course Name', width: 130 },
-  { field: 'course', headerName: 'Program Course', width: 130 },
-  { field: 'coursecode', headerName: 'Course Code', width: 130 },
-  { field: 'numOfStudents', headerName: 'Number Of Students', width: 250 },
-  { field: 'hours', headerName: 'Actual Hrs/week', width: 90 , type: 'number'},
+//   { field: 'Task', headerName: 'Course Name', width: 130 },
+//   { field: 'course', headerName: 'Program Course', width: 130 },
+//   { field: 'coursecode', headerName: 'Course Code', width: 130 },
+//   { field: 'numOfStudents', headerName: 'Number Of Students', width: 250 },
+//   { field: 'hours', headerName: 'Actual Hrs/week', width: 90 , type: 'number'},
 
   
-];
+// ];
          const [outsideActivity, setoutsideActivity] = useState({
         Task: "",
         course: "",
@@ -24,7 +30,9 @@ function OutsideDuties() {
         numOfStudents: 0,
         hours: 0,
     });
-   
+   const lecturer = Users.find(data=> {
+            return data.stuffNumber == user1.staffNumber
+    });
 
     
     const handleAdd = (e) => {
@@ -32,18 +40,24 @@ function OutsideDuties() {
       
       if(outsideActivity.Task && outsideActivity.hours > 0 && outsideActivity.numOfStudents && outsideActivity.coursecode && outsideActivity.course){
 
-          User.teachingOutside.push(outsideActivity)
+          lecturer.teachingOutside.push(outsideActivity)
        
+            setOpen(true)
             
             
         }
 
     }
+
+    const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
     
+    <h1 style={{color:"white", paddingTop:"100px", paddingBottom:"50px", display:"flex", alignItems:"center",justifyContent:"center"}}>Teaching Workload</h1>
        
-    <h2 style={{color:"white", paddingTop:"300px"}}>Activities outside the workload of FT-employment</h2>
+    <h2 style={{color:"white"}}>Activities outside the workload of FT-employment</h2>
         
     
         <Card style={{maxWidth:700}}>
@@ -55,7 +69,7 @@ function OutsideDuties() {
                     <ListItem>Enter Task</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setoutsideActivity({...outsideActivity, Task: e.target.value})} label="Course Name" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setoutsideActivity({...outsideActivity, Task: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid><Grid item xs={12} sm={6}>
                     <ListItem>Program Course</ListItem>
                 </Grid>
@@ -75,7 +89,7 @@ function OutsideDuties() {
                 </Grid>
                 
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setoutsideActivity({...outsideActivity, numOfStudents: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setoutsideActivity({...outsideActivity, numOfStudents: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
 
                 <Grid item xs={12} sm={6}>
@@ -83,7 +97,7 @@ function OutsideDuties() {
                  
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setoutsideActivity({...outsideActivity, hours: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setoutsideActivity({...outsideActivity, hours: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 
                 </Grid>
@@ -100,7 +114,7 @@ function OutsideDuties() {
    justifyContent="center"
   alignItems="center">
                     <Grid>
-<Button onClick={handleAdd} variant='container'>Add</Button>
+<Button onClick={handleAdd} style={{background:'green', color:'white'}} variant='contained'>Add</Button>
                     </Grid>
                     
                 
@@ -119,23 +133,23 @@ function OutsideDuties() {
    justifyContent="space-evenly"
   alignItems="center">
                     <Grid>
-<Button variant='container'><Link to="/"> Cancel </Link></Button>
+<Button variant='contained' style={{backgroundColor:'red'}}><Link to="/"> Cancel </Link></Button>
                     </Grid>
                     <Grid>
-<Button variant='container'><Link to="/">Submit</Link> </Button>
+<Button variant='contained' color='primary'><Link to="/">Submit</Link> </Button>
                     </Grid>
                     </Grid>
     <br></br>
-    <div className='' style={{ height: 300, width: 700 }}>
-      <DataGrid
-      style={{backgroundColor:'white', color: 'black',}}
-        rows={User.teachingOutside}
-        columns={columns}
-        pageSize={7}
-        rowsPerPageOptions={[7]}
-        checkboxSelection
-      />
-    </div>
+    <Stack spacing={2} sx={{ width: '100%' }}>
+      
+      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Community Activity Successfully added
+        </Alert>
+      </Snackbar>
+      
+      
+    </Stack>
     </>
   )
 }

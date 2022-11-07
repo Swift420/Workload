@@ -8,13 +8,32 @@ import logo from "../../assets/logo.png"
 import profile from "../../assets/profile.jpg"
 import sitting from "../../assets/sitting.jpg"
 import {  Routes, Route, Link} from "react-router-dom"
+import { Avatar, Grid } from '@material-ui/core';
+import {useSelector} from "react-redux"
+import { Users } from '../../UserData';
+import {logout} from '../../features/user'
+import {useDispatch} from 'react-redux'
 
 function Home() {
+const dispatch = useDispatch()  
+
+   const user1 = useSelector((state) => state.user.value)
+   const lecturer = Users.find(data=> {
+            return data.stuffNumber == user1.staffNumber
+    });
   return (
     <body id="mainbody">
 
     <div className='dbody'>
     <h1 className='title1'>Nust Workload System</h1>
+    <Grid style={{paddingLeft:"700px", paddingBottom:""}}>
+    <Link to="/Workload" >
+    
+    <Avatar onClick={()=>{
+      dispatch(logout())
+    }} style={{backgroundColor:"Green"}}>{lecturer.fullName1.substring(0,1)}</Avatar>
+    </Link>
+    </Grid>
     <div className='container1'>
       <Link to="/teaching">
       <div className='card1'>

@@ -1,26 +1,34 @@
-import React, { useState } from "react";
-import { User } from '../../UserData'
+import * as React from 'react';
+import  { useState } from "react";
+import { User, Users } from '../../UserData'
 import { Grid, TextField, Button, Card, CardContent, Typography, ListItem } from "@material-ui/core"
 import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom"
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import {useSelector} from "react-redux"
+
 function GroupTeaching() {
 
-
-    const columns: GridColDef[] = [
+  const user1 = useSelector((state) => state.user.value)
+      const lecturer = Users.find(data=> {
+            return data.stuffNumber == user1.staffNumber
+    });
+//     const columns: GridColDef[] = [
  
-  { field: 'group', headerName: 'Groups', width: 130 },
-  { field: 'iDOfGroup', headerName: 'ID Of Group', width: 130 },
-  { field: 'numOfGroupsCoordinated', headerName: 'Number Of Groups Coordinated', width: 90 , type: 'number'},
-  { field: 'sizeOfGroup', headerName: 'size Of Group', width: 90 , type: 'number'},
+//   { field: 'group', headerName: 'Groups', width: 130 },
+//   { field: 'iDOfGroup', headerName: 'ID Of Group', width: 130 },
+//   { field: 'numOfGroupsCoordinated', headerName: 'Number Of Groups Coordinated', width: 90 , type: 'number'},
+//   { field: 'sizeOfGroup', headerName: 'size Of Group', width: 90 , type: 'number'},
 
   
-];
+// ];
      const [groupDetails, setGroupDetails] = useState({
         group: "",
         iDOfGroup: "",
         numOfGroupsCoordinated: 0,
         sizeOfGroup: 0,
     });
+
+
    
 
     
@@ -28,9 +36,9 @@ function GroupTeaching() {
        e.preventDefault()
       if(groupDetails.group && groupDetails.iDOfGroup && groupDetails.numOfGroupsCoordinated > 0 && groupDetails.sizeOfGroup > 0 ){
 
-          User.tecahingGroupDetails.push(groupDetails)
+          lecturer.tecahingGroupDetails.push(groupDetails)
        
-            console.log(User.tecahingGroupDetails)
+            console.log(lecturer)
             
             
         }
@@ -38,11 +46,14 @@ function GroupTeaching() {
     }
 
     
+
+    
   return (
     <>
     
+    <h1 style={{color:"white", paddingTop:"100px", paddingBottom:"50px", display:"flex", alignItems:"center",justifyContent:"center"}}>Teaching Workload</h1>
        
-    <h1 style={{color:"white", paddingTop:"100px"}}>Group Details</h1>
+    <h2 style={{color:"white"}}>Group Details</h2>
         
     
         <Card style={{maxWidth:700}}>
@@ -54,7 +65,7 @@ function GroupTeaching() {
                     <ListItem>Multiple Groups of a course</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setGroupDetails({...groupDetails, group: e.target.value})} label="Course Name" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setGroupDetails({...groupDetails, group: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid><Grid item xs={12} sm={6}>
                     <ListItem>Enter ID/ Name of Group</ListItem>
                 </Grid>
@@ -66,14 +77,14 @@ function GroupTeaching() {
                  
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setGroupDetails({...groupDetails, numOfGroupsCoordinated: e.target.value})}  label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setGroupDetails({...groupDetails, numOfGroupsCoordinated: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <ListItem>Size of Group </ListItem>
                  
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setGroupDetails({...groupDetails, sizeOfGroup: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setGroupDetails({...groupDetails, sizeOfGroup: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 
                 </Grid>
@@ -90,10 +101,10 @@ function GroupTeaching() {
     justifyContent="space-around"
   alignItems="flex-end">
                     <Grid>
-<Button variant='container'><Link to="/teaching"> Course Details </Link></Button>
+<Button variant='contained' color='primary'><Link to="/teaching" > Course Details </Link></Button>
                     </Grid>
                     <Grid>
-<Button onClick={handleAdd} variant='container'><Link to='/duties'>Next</Link> </Button>
+<Button onClick={handleAdd} variant='contained' color='primary'><Link to='/duties'>Next</Link> </Button>
                     </Grid>
                 
                 
@@ -106,16 +117,7 @@ function GroupTeaching() {
 
     <br></br>
 
-    <div className='' style={{ height: 300, width: 700 }}>
-      <DataGrid
-      style={{backgroundColor:'white', color: 'black',}}
-        rows={User.tecahingGroupDetails}
-        columns={columns}
-        pageSize={7}
-        rowsPerPageOptions={[7]}
-        checkboxSelection
-      />
-    </div>
+    
     
     </>
   )

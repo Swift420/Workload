@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { User } from '../../UserData'
+import { User, Users } from '../../UserData'
 import { Grid, TextField, Button, Card, CardContent, Typography, ListItem } from "@material-ui/core"
 import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom"
 import Table from '@mui/material/Table';
@@ -10,24 +10,27 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 import Paper from '@mui/material/Paper';
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import {useSelector} from "react-redux"
+
 
 
 function Teaching() {
 
-
+      const user1 = useSelector((state) => state.user.value)
+      
     
-const columns: GridColDef[] = [
+// const columns: GridColDef[] = [
  
-  { field: 'courseName', headerName: 'Course Name', width: 130 },
-  { field: 'courseCode', headerName: 'CourseCode', width: 130 },
-  { field: 'noveltyOfCourse', headerName: 'Novelty Of Course', width: 250 },
-  { field: 'time', headerName: 'time', width: 90 , type: 'number'},
-  { field: 'contactTime', headerName: 'Contact Time', width: 90 , type: 'number'},
-  { field: 'size', headerName: 'Group Size', width: 90 , type: 'number'},
-  { field: 'Excursions', headerName: 'Excursions', width: 90 , type: 'number'},
+//   { field: 'courseName', headerName: 'Course Name', width: 130 },
+//   { field: 'courseCode', headerName: 'CourseCode', width: 130 },
+//   { field: 'noveltyOfCourse', headerName: 'Novelty Of Course', width: 250 },
+//   { field: 'time', headerName: 'time', width: 90 , type: 'number'},
+//   { field: 'contactTime', headerName: 'Contact Time', width: 90 , type: 'number'},
+//   { field: 'size', headerName: 'Group Size', width: 90 , type: 'number'},
+//   { field: 'Excursions', headerName: 'Excursions', width: 90 , type: 'number'},
 
   
-];
+// ];
 
 
        const [teachingDetails, setteachingDetails] = useState({
@@ -41,25 +44,31 @@ const columns: GridColDef[] = [
     });
    
 
-    
+    const lecturer = Users.find(data=> {
+            return data.stuffNumber == user1.staffNumber
+    });
+
+        console.log(`lecturer ${lecturer}`)
     const handleAdd = (e) => {
        e.preventDefault()
       
-      if(teachingDetails.courseCode && teachingDetails.courseCode && teachingDetails.noveltyOfCourse && teachingDetails.contactTime > 0 && teachingDetails.size > 0 && teachingDetails.Excursions > 0){
+      if(teachingDetails.courseCode && teachingDetails.courseCode && teachingDetails.noveltyOfCourse && teachingDetails.contactTime > 0 && (teachingDetails.size === 30 || teachingDetails.size === 50)&&  teachingDetails.Excursions > 0){
 
-          User.teachingCourseDetails.push(teachingDetails)
+          lecturer.teachingCourseDetails.push(teachingDetails)
        
-            console.log(User.teachingCourseDetails)
+            console.log(lecturer)
             
             
         }
 
     }
+    
   return (
     <>
     
+    <h1 style={{color:"white", paddingTop:"100px", paddingBottom:"50px", display:"flex", alignItems:"center",justifyContent:"center"}}>Teaching Workload</h1>
        
-    <h1 style={{color:"white", paddingTop:"800px"}}>Course Details</h1>
+    <h2 style={{color:"white"}}>Course Details</h2>
         
     
         <Card style={{maxWidth:700}}>
@@ -68,7 +77,7 @@ const columns: GridColDef[] = [
 
                 
                 <Grid item xs={12} sm={6}>
-                    <ListItem>Contact Code</ListItem>
+                    <ListItem>Course Code</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <TextField  onChange={(e)=> setteachingDetails({...teachingDetails, courseCode: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
@@ -83,15 +92,9 @@ const columns: GridColDef[] = [
                  
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, noveltyOfCourse: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, noveltyOfCourse: e.target.value})}  label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
-                <Grid item xs={12} sm={6}>
-                    <ListItem>Time </ListItem>
-                 
-                </Grid>
-                <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, time: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
-                </Grid>
+                
                 
                 </Grid>
                 <Grid container spacing={1}>
@@ -101,19 +104,19 @@ const columns: GridColDef[] = [
                     <ListItem>Enter Contact time/week</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, contactTime: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, contactTime: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid><Grid item xs={12} sm={6}>
                     <ListItem>Group Size(30,50)</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, size: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, size: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 <Grid item xs={12} sm={6}>
                     <ListItem>Excursions(total days)</ListItem>
                  
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, Excursions: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setteachingDetails({...teachingDetails, Excursions: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 
                 
@@ -128,7 +131,7 @@ const columns: GridColDef[] = [
    
                     <Grid>
                         
-                  <Button onClick={handleAdd} variant='container'><Link to="/groupteaching">Group Details</Link> </Button> 
+                  <Button onClick={handleAdd} color="primary" variant='contained'><Link to="/groupteaching">Group Details</Link> </Button> 
                   </Grid>
                    
                 
@@ -144,16 +147,7 @@ const columns: GridColDef[] = [
 
     <br></br>
 
-    <div className='' style={{ height: 500, width: 700 }}>
-      <DataGrid
-      style={{backgroundColor:'white', color: 'black',}}
-        rows={User.teachingCourseDetails}
-        columns={columns}
-        pageSize={7}
-        rowsPerPageOptions={[7]}
-        checkboxSelection
-      />
-    </div>
+    
   
     </>
   )

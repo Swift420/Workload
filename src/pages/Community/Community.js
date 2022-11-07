@@ -1,25 +1,42 @@
 
 import React, { useState } from "react";
-import { User } from '../../UserData'
+import { User, Users } from '../../UserData'
 import { Grid, TextField, Button, Card, CardContent, Typography, ListItem } from "@material-ui/core"
 import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom"
-import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+
+import Stack from '@mui/material/Stack';
+
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
+import {useSelector} from "react-redux"
+
 
 function Community() {
+   const user1 = useSelector((state) => state.user.value)
+   
+    const [open, setOpen] = React.useState(false);
 
     const [communityMajorActivity, setCommunityMajorActivity] = useState({
         majorActivity: "",
         hours: 0
     });
 
-    const columns: GridColDef[] = [
- 
-  { field: 'majorActivity', headerName: 'Major Activity', width: 130 },
+    const lecturer = Users.find(data=> {
+            return data.stuffNumber == user1.staffNumber
+    });
 
-  { field: 'hours', headerName: 'Hrs/week', width: 90 , type: 'number'},
+
+   
+
+//     const columns: GridColDef[] = [
+ 
+//   { field: 'majorActivity', headerName: 'Major Activity', width: 130 },
+
+//   { field: 'hours', headerName: 'Hrs/week', width: 90 , type: 'number'},
 
   
-];
+// ];
    
 
     
@@ -28,13 +45,19 @@ function Community() {
     
       if(communityMajorActivity.majorActivity && communityMajorActivity.hours > 0){
 
-          User.communityMajorActivities.push(communityMajorActivity)
-            setCommunityMajorActivity({...communityMajorActivity, majorActivity: ""})
-            setCommunityMajorActivity({...communityMajorActivity, hours: 0})
+          lecturer.communityMajorActivities.push(communityMajorActivity)
+            
+            console.log(lecturer)
+            setOpen(true)
+
             
         }
 
     }
+
+    const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
     
@@ -52,12 +75,12 @@ function Community() {
                     <ListItem>Enter Major Activity</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=>setCommunityMajorActivity({...communityMajorActivity, majorActivity: e.target.value})} label="Course Name" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=>setCommunityMajorActivity({...communityMajorActivity, majorActivity: e.target.value})} label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid><Grid item xs={12} sm={6}>
                     <ListItem>Enter Hours/Week</ListItem>
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=>setCommunityMajorActivity({...communityMajorActivity, hours: e.target.value})} label="Enter Contact time/week" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=>setCommunityMajorActivity({...communityMajorActivity, hours: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 
                 
@@ -74,8 +97,8 @@ function Community() {
   direction="row"
    justifyContent="center"
   alignItems="center">
-                    <Grid>
-<Button onClick={handleAdd} variant='container'>Add</Button>
+                    <Grid >
+<Button onClick={handleAdd} style={{background:'green', color:'white'}} variant='contained'>Add</Button>
                     </Grid>
                     
                 
@@ -95,13 +118,13 @@ function Community() {
   alignItems="center">
                     
                     <Grid>
-<Button variant='container'><Link to="/">Submit</Link> </Button>
+<Button color="primary" variant='contained'><Link to="/">Done</Link> </Button>
                     </Grid>
                     </Grid>
 
                     <br></br>
 
-                    <div className='' style={{ height: 300, width: 700 }}>
+                    {/* <div className='' style={{ height: 300, width: 700 }}>
       <DataGrid
       style={{backgroundColor:'white', color: 'black',}}
         rows={User.communityMajorActivities}
@@ -110,7 +133,17 @@ function Community() {
         rowsPerPageOptions={[7]}
         checkboxSelection
       />
-    </div>
+    </div> */}
+    <Stack spacing={2} sx={{ width: '100%' }}>
+      
+      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Community Activity Successfully added
+        </Alert>
+      </Snackbar>
+      
+      
+    </Stack>
     
     </>
   )

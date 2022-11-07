@@ -1,42 +1,65 @@
 import React, { useState } from "react";
-import { User } from '../../UserData'
+import { User, Users } from '../../UserData'
 import { Grid, TextField, Button, Card, CardContent, Typography, ListItem } from "@material-ui/core"
 import { BrowserRouter as Router, Routes, Route, Link} from "react-router-dom"
 import { DataGrid, GridColDef, GridValueGetterParams } from '@mui/x-data-grid';
+import Stack from '@mui/material/Stack';
+
+import Snackbar from '@mui/material/Snackbar';
+import MuiAlert, { AlertProps } from '@mui/material/Alert';
+import Alert from "@mui/material/Alert";
+import {useSelector} from "react-redux"
 
 function ResearchCourse() {
+  const user1 = useSelector((state) => state.user.value)
+  const lecturer = Users.find(data=> {
+            return data.stuffNumber == user1.staffNumber
+    });
 
+    console.log(lecturer)
+    const [open, setOpen] = React.useState(false);
      const [researchActivity, setResearchActivity] = useState({
         Task: "",
         course: "",
         contribution: "",
         hours: 0,
     });
+
+    const [dataGridRows, setDataGridRows] = useState([]);
    
+     
 
-     const columns: GridColDef[] = [
+//      const columns: GridColDef[] = [
  
-  { field: 'Task', headerName: 'Task', width: 130 },
-  { field: 'course', headerName: 'Program Course', width: 130 },
-  { field: 'contribution', headerName: 'Type of contribution', width: 130 },
+//   { field: 'Task', headerName: 'Task', width: 130 },
+//   { field: 'course', headerName: 'Program Course', width: 130 },
+//   { field: 'contribution', headerName: 'Type of contribution', width: 130 },
 
-  { field: 'hours', headerName: 'Actual Hrs/week', width: 90 , type: 'number'},
+//   { field: 'hours', headerName: 'Actual Hrs/week', width: 90 , type: 'number'},
 
   
-];
+// ];
+
+ 
 
     
     const handleAdd = (e) => {
        e.preventDefault()
       if(researchActivity.Task && researchActivity.hours > 0 && researchActivity.contribution && researchActivity.course){
 
-          User.researchCourseDetails.push(researchActivity)
+          lecturer.researchCourseDetails.push(researchActivity)
        
-            console.log(User.researchCourseDetails)
+            console.log(lecturer.researchCourseDetails)
+            setOpen(true)
             
         }
+             
 
     }
+
+    const handleClose = () => {
+    setOpen(false);
+  };
   return (
     <>
     
@@ -73,7 +96,7 @@ function ResearchCourse() {
                  
                 </Grid>
                 <Grid item xs={12} sm={6}>
-                    <TextField onChange={(e)=> setResearchActivity({...researchActivity, hours: e.target.value})}  label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
+                    <TextField onChange={(e)=> setResearchActivity({...researchActivity, hours: e.target.value})} type="number" label="" palceholder="Enter Course Code" variant="outlined" fullWidth></TextField>
                 </Grid>
                 
                 </Grid>
@@ -97,23 +120,35 @@ function ResearchCourse() {
    justifyContent="space-evenly"
   alignItems="center">
                     <Grid>
-<Button onClick={handleAdd} variant='container'>Add</Button>
+<Button onClick={handleAdd} style={{background:'green', color:'white'}} variant='contained'>Add</Button>
                     </Grid>
                     <Grid>
-<Button variant='container'><Link to="/">Submit</Link> </Button>
+<Button variant='contained' color="primary"><Link to="/">Done</Link> </Button>
                     </Grid>
                     </Grid>
     <br></br>
-    <div className='' style={{ height: 300, width: 700 }}>
+    {/* <div className='' style={{ height: 300, width: 700 }}>
       <DataGrid
       style={{backgroundColor:'white', color: 'black',}}
-        rows={User.teachingOutside}
+        rows={dataGridRows}
         columns={columns}
         pageSize={7}
         rowsPerPageOptions={[7]}
         checkboxSelection
+        getRowId={(row) =>  row.Task}
       />
-    </div>
+    </div> */}
+
+    <Stack spacing={2} sx={{ width: '100%' }}>
+      
+      <Snackbar open={open} autoHideDuration={2000} onClose={handleClose}>
+        <Alert onClose={handleClose} severity="success" sx={{ width: '100%' }}>
+          Research Successfully added
+        </Alert>
+      </Snackbar>
+      
+      
+    </Stack>
     </>
   )
 }
